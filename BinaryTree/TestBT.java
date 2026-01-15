@@ -10,88 +10,92 @@ this.left = null;
 this.right = null;
 }
 }
+
 class BT{
-Node root;
-BT(){
-root = null;
+static int index = -1;
+
+Node buildBT(int[] nodes){
+index ++;
+if(nodes[index] == -1){
+return null;
+}
+Node node = new Node(nodes[index]);
+node.left = buildBT(nodes);
+node.right = buildBT(nodes);
+return node;
 }
 
-void preOrder(Node node){
-if(node == null){
-return ;
-}
-System.out.print(node.data+" ");
-preOrder(node.left);
-preOrder(node.right);
-}
-
-void postOrder(Node node){
-if(node == null){
+static void inOrder(Node node){
+if(node == null)
 return;
-}
-postOrder(node.left);
-postOrder(node.right);
-System.out.print(node.data+" ");
-}
-
-void inOrder(Node node){
-if(node == null){
-return;
-}
 inOrder(node.left);
 System.out.print(node.data+" ");
 inOrder(node.right);
 }
 
-void levelOrder(Queue<Node> q){
+static void preOrder(Node node){
+if(node == null)
+return;
+System.out.print(node.data+" ");
+preOrder(node.left);
+preOrder(node.right);
+}
 
+static void postOrder(Node node){
+if(node == null)
+return;
+postOrder(node.left);
+postOrder(node.right);
+System.out.print(node.data+" ");
+}
+
+static void levelOrder(Node node){
+if(node == null)
+return;
+Queue<Node> q = new LinkedList<Node>();
+q.add(node);
+q.add(null);
 while(!q.isEmpty()){
-Node node = q.poll();
-if(node != null){
+node = q.remove();
+if(node == null)
+{
+System.out.println();
+if(q.isEmpty())
+	break;
+else
+	q.add(null);
+}
+else{
 System.out.print(node.data+" ");
 if(node.left!=null)
-q.offer(node.left);
-if(node.right!=null)
-q.offer(node.right);
-}
-else if(node == null)
-q.offer(q.poll());
-System.out.println();
+q.add(node.left);
+if(node.right != null)
+q.add(node.right);
 }
 
 }
-
 }
 
-class TestBT{
+}
+class TestBT
+{
 public static void main(String ...args){
 BT obj = new BT();
-obj.root = new Node(1);
-obj.root.left = new Node(2);
-obj.root.right = new Node(3);
-
-obj.root.left.left = new Node(4);
-obj.root.left.right = new Node(5);
-obj.root.right.left = new Node(6);
-obj.root.right.right = new Node(7);
-
-System.out.print("Pre order traversal : ");
-obj.preOrder(obj.root);
+int[] nodes = {1,2,4,-1,-1,5,-1,-1,3,-1,6,-1,-1};	//pre-order
+Node root = obj.buildBT(nodes);
+System.out.println(root.data);	//1
+obj.inOrder(root);	//4 2 5 1 3 6
 System.out.println();
-
-System.out.print("Post order traversal : ");
-obj.postOrder(obj.root);
+obj.preOrder(root);	//1 2 4 5 3 6
 System.out.println();
-
-System.out.print("In order traversal : ");
-obj.inOrder(obj.root);
+obj.postOrder(root);	//4 5 2 6 3 1
 System.out.println();
-
-System.out.println("Level order traversal : ");
-Queue<Node> q = new LinkedList<Node>();
-q.offer(obj.root);
-q.offer(null);
-obj.levelOrder(q);
+obj.levelOrder(root);
+/*
+1
+2 3
+4 5 6
+*/
 
 }
 }
